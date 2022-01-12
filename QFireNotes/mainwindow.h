@@ -4,8 +4,8 @@
 #include <QMainWindow>
 #include <QWidget>
 #include <QListWidgetItem>
+#include <QtNetwork>
 
-#include "notes.h"
 #include "addnote.h"
 
 using std::string;

@@ -12,13 +12,11 @@ CONFIG += c++11
 SOURCES += \
     addnote.cpp \
     main.cpp \
-    mainwindow.cpp \
-    notes.cpp
+    mainwindow.cpp
 
 HEADERS += \
     addnote.h \
-    mainwindow.h \
-    notes.h
+    mainwindow.h
 
 FORMS += \
     addnote.ui \

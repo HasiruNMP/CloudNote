@@ -18,7 +18,7 @@
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>4</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page">
        <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="2,5,2">
@@ -83,14 +83,14 @@
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_4">
                 <item>
-                 <widget class="QPushButton" name="pushButton_3">
+                 <widget class="QPushButton" name="btnNavLogin">
                   <property name="text">
                    <string>Login</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="pushButton_4">
+                 <widget class="QPushButton" name="btnNavSignup">
                   <property name="text">
                    <string>Create Account</string>
                   </property>
@@ -204,16 +204,16 @@
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_6">
                 <item>
-                 <widget class="QLineEdit" name="lineEdit_2">
+                 <widget class="QLineEdit" name="lineLoginUN">
                   <property name="placeholderText">
-                   <string>Password</string>
+                   <string>Username</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="lineEdit_3">
+                 <widget class="QLineEdit" name="lineLoginPW">
                   <property name="placeholderText">
-                   <string>Username</string>
+                   <string>Password</string>
                   </property>
                  </widget>
                 </item>
@@ -262,14 +262,14 @@
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_16">
                 <item>
-                 <widget class="QPushButton" name="pushButton_6">
+                 <widget class="QPushButton" name="btnLogin">
                   <property name="text">
                    <string>Login</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="pushButton_5">
+                 <widget class="QPushButton" name="btnCancelLogin">
                   <property name="text">
                    <string>Cancel</string>
                   </property>
@@ -383,21 +383,21 @@
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_10">
                 <item>
-                 <widget class="QLineEdit" name="lineEdit">
+                 <widget class="QLineEdit" name="lineSignupUN">
                   <property name="placeholderText">
                    <string>Username</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="lineEdit_4">
+                 <widget class="QLineEdit" name="lineSignupPW">
                   <property name="placeholderText">
                    <string>Password</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QLineEdit" name="lineEdit_5">
+                 <widget class="QLineEdit" name="lineSignupPWRe">
                   <property name="placeholderText">
                    <string>Retype password</string>
                   </property>
@@ -448,14 +448,14 @@
                </property>
                <layout class="QHBoxLayout" name="horizontalLayout_22">
                 <item>
-                 <widget class="QPushButton" name="pushButton_8">
+                 <widget class="QPushButton" name="btnSignupCreate">
                   <property name="text">
                    <string>Create Account</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="pushButton_7">
+                 <widget class="QPushButton" name="btnCancelSignup">
                   <property name="text">
                    <string>Cancel</string>
                   </property>
@@ -513,7 +513,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="pushButton_9">
+           <widget class="QPushButton" name="btnAuthLogout">
             <property name="text">
              <string>Logout</string>
             </property>
@@ -542,7 +542,7 @@
                </widget>
               </item>
               <item>
-               <widget class="QLineEdit" name="lineEdit_6">
+               <widget class="QLineEdit" name="lineNoteTitle">
                 <property name="readOnly">
                  <bool>true</bool>
                 </property>
@@ -583,14 +583,14 @@
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_28">
              <item>
-              <widget class="QPushButton" name="pushButton_2">
+              <widget class="QPushButton" name="btnNavCreate">
                <property name="text">
                 <string>Create New Note</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton">
+              <widget class="QPushButton" name="btnDeleteNote">
                <property name="text">
                 <string>Delete Note</string>
                </property>
@@ -632,14 +632,14 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="lineEdit_7">
+           <widget class="QLineEdit" name="lineAddTitle">
             <property name="placeholderText">
              <string>Type note title here</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPlainTextEdit" name="plainTextEdit_2">
+           <widget class="QPlainTextEdit" name="plainNoteText">
             <property name="placeholderText">
              <string>Type note content here</string>
             </property>
@@ -669,14 +669,14 @@
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_32">
              <item>
-              <widget class="QPushButton" name="pushButton_11">
+              <widget class="QPushButton" name="btnSaveNote">
                <property name="text">
                 <string>Save New Note</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_10">
+              <widget class="QPushButton" name="btnCancelSave">
                <property name="text">
                 <string>Cancel</string>
                </property>

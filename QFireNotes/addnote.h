@@ -2,6 +2,7 @@
 #define ADDNOTE_H
 #include "mainwindow.h"
 #include <QWidget>
+#include <QtNetwork>
 
 namespace Ui {
 class AddNote;
