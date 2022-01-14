@@ -1,2 +1,2 @@
 # QFireNotes
-A simple note keeping app built with Qt, C++, and Firebase
+A simple cloud note keeping app built with Qt, C++, and Firebase
