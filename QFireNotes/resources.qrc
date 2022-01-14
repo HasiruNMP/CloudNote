@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/style">
+        <file>res/style/Cstartpage.qss</file>
+        <file>res/style/Devsion.qss</file>
+        <file>res/style/Fibrary.qss</file>
+    </qresource>
+    <qresource prefix="/img"/>
+</RCC>

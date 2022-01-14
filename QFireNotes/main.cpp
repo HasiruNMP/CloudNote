@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    QFile stylefile("C:/Work/SoftwareDev/GitHub/QFireNotes/QFireNotes/style/Combinear.qss");
+    QFile stylefile(":/style/res/style/Fibrary.qss");
     stylefile.open(QFile::ReadOnly);
     QString stylesheet = QLatin1String(stylefile.readAll());
     a.setStyleSheet(stylesheet);

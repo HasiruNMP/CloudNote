@@ -18,7 +18,7 @@
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="page">
        <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="2,5,2">
@@ -205,6 +205,11 @@
                <layout class="QVBoxLayout" name="verticalLayout_6">
                 <item>
                  <widget class="QLineEdit" name="lineLoginUN">
+                  <property name="font">
+                   <font>
+                    <pointsize>12</pointsize>
+                   </font>
+                  </property>
                   <property name="placeholderText">
                    <string>Username</string>
                   </property>
@@ -212,6 +217,11 @@
                 </item>
                 <item>
                  <widget class="QLineEdit" name="lineLoginPW">
+                  <property name="font">
+                   <font>
+                    <pointsize>12</pointsize>
+                   </font>
+                  </property>
                   <property name="placeholderText">
                    <string>Password</string>
                   </property>
@@ -263,6 +273,11 @@
                <layout class="QHBoxLayout" name="horizontalLayout_16">
                 <item>
                  <widget class="QPushButton" name="btnLogin">
+                  <property name="font">
+                   <font>
+                    <pointsize>12</pointsize>
+                   </font>
+                  </property>
                   <property name="text">
                    <string>Login</string>
                   </property>
@@ -270,6 +285,11 @@
                 </item>
                 <item>
                  <widget class="QPushButton" name="btnCancelLogin">
+                  <property name="font">
+                   <font>
+                    <pointsize>12</pointsize>
+                   </font>
+                  </property>
                   <property name="text">
                    <string>Cancel</string>
                   </property>
@@ -497,7 +517,7 @@
       <widget class="QWidget" name="page_4">
        <layout class="QVBoxLayout" name="verticalLayout_16" stretch="1,10,0">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_24" stretch="9,1">
+         <layout class="QHBoxLayout" name="horizontalLayout_24" stretch="9,0,1">
           <item>
            <widget class="QLabel" name="label_4">
             <property name="font">
@@ -509,6 +529,13 @@
             </property>
             <property name="text">
              <string>Your Notes</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="btnRefresh">
+            <property name="text">
+             <string>Refresh</string>
             </property>
            </widget>
           </item>
@@ -551,11 +578,7 @@
              </layout>
             </item>
             <item>
-             <widget class="QPlainTextEdit" name="plainTextEdit">
-              <property name="readOnly">
-               <bool>true</bool>
-              </property>
-             </widget>
+             <widget class="QPlainTextEdit" name="plainTextEdit"/>
             </item>
            </layout>
           </item>
@@ -652,11 +675,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QPlainTextEdit" name="plainNoteText">
-            <property name="placeholderText">
-             <string>Type note content here</string>
-            </property>
-           </widget>
+           <widget class="QPlainTextEdit" name="plainNoteText"/>
           </item>
          </layout>
         </item>
@@ -711,6 +730,21 @@
          </layout>
         </item>
        </layout>
+      </widget>
+      <widget class="QWidget" name="page_6">
+       <widget class="QLabel" name="label_6">
+        <property name="geometry">
+         <rect>
+          <x>310</x>
+          <y>180</y>
+          <width>101</width>
+          <height>16</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>loading...</string>
+        </property>
+       </widget>
       </widget>
      </widget>
     </item>

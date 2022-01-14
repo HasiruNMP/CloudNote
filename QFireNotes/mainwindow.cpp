@@ -5,9 +5,20 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
-    ui->stackedWidget->setCurrentIndex(1);
     netMngNotes = new QNetworkAccessManager(this);
+
+    ui->setupUi(this);
+    ui->stackedWidget->setCurrentIndex(5);
+
+    readAuthFile();
+
+
+
+
+    //rx = QRegularExpression("/^[a-zA-Z\s]*$/g");
+    //validator = new QRegularExpressionValidator(rx, this);
+    //ui->lineAddTitle->setValidator(validator);
+
 
     //connect(ui->listWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(onListMailItemClicked(QListWidgetItem*)));
     //connect(ui->listWidget->selectionModel(),SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this,SLOT(enableEditDelete()));
@@ -18,7 +29,57 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::readAuthFile()
+{
+    //qDebug() << "890";
 
+    QStringList authList;
+
+    QFile authFile("authuser.txt");
+    if (authFile.open(QIODevice::ReadWrite | QIODevice::Text))
+    {
+        while (!authFile.atEnd()) authList.append(authFile.readLine());
+    }
+    authFile.close();
+
+    //qDebug() << authList[0] << authList[1] << authList[2];
+
+    if(!authList.isEmpty())
+    {
+        if(authList[0]=="loggedin\n")
+        {
+            storedUN = authList[1].remove("\n");
+            //qDebug() << authList[1].remove("\n");
+            storedPW = authList[2].remove("\n");
+            //qDebug() << authList[2].remove("\n");
+            loginAuthAuto();
+        }
+        else
+        {
+            ui->stackedWidget->setCurrentIndex(0);
+        }
+    }
+    else
+    {
+        ui->stackedWidget->setCurrentIndex(0);
+    }
+
+
+
+
+}
+
+void MainWindow::setAuthFile(QStringList authstrlist)
+{
+    QFile newauthfile("authuser.txt");
+    if (newauthfile.open(QIODevice::ReadWrite)) {
+        QTextStream stream(&newauthfile);
+        stream << authstrlist[0] << "\n";
+        stream << authstrlist[1] << "\n";
+        stream << authstrlist[2] << "\n";
+    }
+    newauthfile.close();
+}
 
 void MainWindow::validateUsername()
 {
@@ -83,7 +144,7 @@ void MainWindow::loginAuth()
 void MainWindow::readLAuth()
 {
     QByteArray authResult = netRepAuth->readAll();
-    qDebug() << authResult << "456";
+    //qDebug() << authResult << "456";
     QString auth = QString(authResult);
     auth.remove('"');
     auth.remove('{');
@@ -91,12 +152,14 @@ void MainWindow::readLAuth()
     auth.remove('\\');
     QRegularExpression separator("[(,|:|)]");
     QStringList unamepw = auth.split(separator);
-    qDebug() << unamepw;
+    //qDebug() << unamepw;
     if(loginUN == unamepw[3] && loginPW == unamepw[1])
     {
-        qDebug() << "234";
-        showAlert("Login Succesfull!");
+        //qDebug() << "234";
         authUser = loginUN;
+        QStringList auth = {"loggedin",loginUN,loginPW};
+        setAuthFile(auth);
+        showAlert("Login Succesfull!");
         ui->lineLoginUN->clear();
         ui->lineLoginPW->clear();
         ui->stackedWidget->setCurrentIndex(3);
@@ -104,10 +167,45 @@ void MainWindow::readLAuth()
     }
     else
     {
-        qDebug() << "invalid username or password";
+        //qDebug() << "invalid username or password";
         ui->lineLoginUN->clear();
         ui->lineLoginPW->clear();
         showAlert("Invalid username or password!");
+    }
+
+}
+
+void MainWindow::loginAuthAuto()
+{
+    QString url = "https://qfirenotes-default-rtdb.firebaseio.com/users/" + storedUN + "/auth.json";
+    netRepAuthAuto = netMngNotes->get(QNetworkRequest(QUrl(url)));
+    connect(netRepAuthAuto, &QNetworkReply::readyRead, this, &MainWindow::readLAuthAuto);
+
+}
+
+void MainWindow::readLAuthAuto()
+{
+    QByteArray authResult = netRepAuthAuto->readAll();
+    //qDebug() << authResult << "456";
+    QString auth = QString(authResult);
+    auth.remove('"');
+    auth.remove('{');
+    auth.remove('}');
+    auth.remove('\\');
+    QRegularExpression separator("[(,|:|)]");
+    QStringList unamepw = auth.split(separator);
+    //qDebug() << unamepw;
+    if(storedUN == unamepw[3] && storedPW == unamepw[1])
+    {
+        //qDebug() << "234";
+        authUser = storedUN;
+        ui->stackedWidget->setCurrentIndex(3);
+        getAllNotes(authUser);
+    }
+    else
+    {
+        //qDebug() << "invalid username or password";
+        ui->stackedWidget->setCurrentIndex(0);
     }
 
 }
@@ -133,12 +231,40 @@ void MainWindow::refresh()
     getAllNotes(authUser);
 }
 
+void MainWindow::confirmDelete()
+{
+    QMessageBox::StandardButton reply = QMessageBox::question(this,"Confirm Delete", "Are you sure you want to delete the selected note?", QMessageBox::Yes | QMessageBox::No);
+
+    if(reply == QMessageBox::Yes){
+        deleteNote();
+    }
+}
+
+void MainWindow::confirmLogout()
+{
+    QMessageBox::StandardButton reply = QMessageBox::question(this,"Confirm Logout", "Are you sure you want to logout?", QMessageBox::Yes | QMessageBox::No);
+
+    if(reply == QMessageBox::Yes){
+        logout();
+    }
+}
+
+void MainWindow::logout()
+{
+    qDebug() << "logging out";
+    QStringList lout = {"loggedout","null","null"};
+    ui->stackedWidget->setCurrentIndex(0);
+    setAuthFile(lout);
+}
+
+
+
 void MainWindow::getAllNotes(QString user)
 {
-    qDebug() << "getting all notes" << user;
+    //qDebug() << "getting all notes" << user;
 
     QString url = "https://qfirenotes-default-rtdb.firebaseio.com/users/" + user + "/notenames.json";
-    qDebug() << url << "678";
+    //qDebug() << url << "678";
     netRepGetNotes = netMngNotes->get(QNetworkRequest(QUrl(url)));
     connect(netRepGetNotes, &QNetworkReply::readyRead, this, &MainWindow::readAllNotes );
 }
@@ -149,7 +275,7 @@ void MainWindow::showNoteList(QStringList newList)
     ui->listWidget->clear();
     for (auto& i : newList)
     {
-        qDebug() << i;
+        //qDebug() << i;
         if(i != "null"){
             ui->listWidget->addItem(i);
             //ui->listWidget->addItem("1234");
@@ -161,7 +287,7 @@ void MainWindow::showNoteList(QStringList newList)
 void MainWindow::readAllNotes()
 {
     QByteArray noteListQb = netRepGetNotes->readAll();
-    qDebug() << noteListQb;
+    //qDebug() << noteListQb;
 
     if(noteListQb != "null"){
 
@@ -182,7 +308,7 @@ void MainWindow::readAllNotes()
         showNoteList(noteNameList);
     }
     else{
-        qDebug() << noteListQb << "345";
+        //qDebug() << noteListQb << "345";
         showAlert("You don't have any notes yet. Create your first note!");
     }
 
@@ -206,7 +332,7 @@ void MainWindow::showNote()
 
 void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
 {
-    qDebug() << item->text();
+    //qDebug() << item->text();
     selectedNote = item->text();
     ui->lineNoteTitle->setText(selectedNote);
     getNote(selectedNote);
@@ -221,7 +347,7 @@ void MainWindow::getNote(QString notename)
     QString urlp5 = "/content.json";
     QString url = urlp1+urlp2+urlp3+urlp4+urlp5;
 
-    qDebug() << url;
+    //qDebug() << url;
     netRepShowNote = netMngNotes->get(QNetworkRequest(QUrl(url)));
     connect(netRepShowNote, &QNetworkReply::readyRead, this, &MainWindow::showNote);
 }
@@ -254,7 +380,7 @@ void MainWindow::pushNote()
 
     for (auto& i : noteList)
     {
-        qDebug() << i;
+        //qDebug() << i;
         if(i != "null"){
             uplistVM[i] = "~";
         }
@@ -300,7 +426,7 @@ void MainWindow::deleteNote()
 
     for (auto& i : noteList)
     {
-        qDebug() << i;
+        //qDebug() << i;
         if(i != "null"){
             uplistVM[i] = "~";
         }
@@ -348,13 +474,23 @@ void MainWindow::on_btnLogin_clicked()
 
 void MainWindow::on_btnSaveNote_clicked()
 {
-    pushNote();
+    QString noteT = ui->lineAddTitle->text();
+
+    if(noteT.contains("~") || noteT.contains("[") || noteT.contains("]") || noteT.contains("{") || noteT.contains("}") || noteT.contains(":") || noteT.contains('"') || noteT.contains("\\") || noteT.contains("/")){
+        //qDebug() << "invalid title";
+    }
+    else
+    {
+        pushNote();
+        //qDebug() << "valid title";
+    }
+    //
 }
 
 
 void MainWindow::on_btnDeleteNote_clicked()
 {
-    deleteNote();
+    confirmDelete();
 }
 
 
@@ -413,12 +549,19 @@ void MainWindow::on_btnCancelSave_clicked()
 
 void MainWindow::on_btnAuthLogout_clicked()
 {
-
+    confirmLogout();
 }
 
 
 void MainWindow::on_listWidget_itemSelectionChanged()
 {
     enableEditDelete();
+}
+
+
+
+void MainWindow::on_btnRefresh_clicked()
+{
+    refresh();
 }
 

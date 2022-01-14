@@ -44,11 +44,9 @@ private slots:
     void on_btnLogin_clicked();
     void on_btnEditNote_clicked();
     void on_btnDeleteNote_clicked();
-
-
     void on_btnAuthLogout_clicked();
-
     void on_listWidget_itemSelectionChanged();
+    void on_btnRefresh_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -58,14 +56,20 @@ private:
     QNetworkReply * netRepValUN;
     QNetworkReply * netRepAuth;
     QNetworkReply * netDelNote;
+    QNetworkReply * netRepAuthAuto;
     QString selectedNote;
     QString newUN;
     QString newPW;
     QString loginUN;
     QString loginPW;
+    QString storedUN;
+    QString storedPW;
     QString authUser;
     QStringList noteList;
     bool editOn = false;
+    QRegularExpression rx;
+    QValidator *validator;
+
 
     void getNote(QString notename);
     void pushNote();
@@ -74,8 +78,15 @@ private:
     void validateUsername();
     void createAccount();
     void loginAuth();
+    void loginAuthAuto();
+    void readLAuthAuto();
     void showAlert(QString msg);
     void refresh();
+    void confirmDelete();
+    void confirmLogout();
+    void logout();
+    void readAuthFile();
+    void setAuthFile(QStringList authstrlist);
 };
 
 #endif // MAINWINDOW_H
