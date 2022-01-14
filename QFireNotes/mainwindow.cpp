@@ -8,16 +8,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->setupUi(this);
     ui->stackedWidget->setCurrentIndex(1);
     netMngNotes = new QNetworkAccessManager(this);
-    connect(ui->listWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(onListMailItemClicked(QListWidgetItem*)));
 
+    //connect(ui->listWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(onListMailItemClicked(QListWidgetItem*)));
+    //connect(ui->listWidget->selectionModel(),SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this,SLOT(enableEditDelete()));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-
-
 
 
 
@@ -31,6 +30,7 @@ void MainWindow::validateUsername()
 
     netRepValUN = netMngNotes->get(QNetworkRequest(QUrl(url)));
     connect(netRepValUN, &QNetworkReply::readyRead, this, &MainWindow::readUNVali);
+
 }
 
 void MainWindow::readUNVali()
@@ -77,6 +77,7 @@ void MainWindow::loginAuth()
     QString url = "https://qfirenotes-default-rtdb.firebaseio.com/users/" + loginUN + "/auth.json";
     netRepAuth = netMngNotes->get(QNetworkRequest(QUrl(url)));
     connect(netRepAuth, &QNetworkReply::readyRead, this, &MainWindow::readLAuth);
+
 }
 
 void MainWindow::readLAuth()
@@ -95,9 +96,11 @@ void MainWindow::readLAuth()
     {
         qDebug() << "234";
         showAlert("Login Succesfull!");
+        authUser = loginUN;
         ui->lineLoginUN->clear();
         ui->lineLoginPW->clear();
         ui->stackedWidget->setCurrentIndex(3);
+        getAllNotes(authUser);
     }
     else
     {
@@ -109,24 +112,41 @@ void MainWindow::readLAuth()
 
 }
 
+void MainWindow::enableEditDelete()
+{
+    ui->btnEditNote->setEnabled(true);
+    ui->btnDeleteNote->setEnabled(true);
+}
+
 void MainWindow::showAlert(QString msg)
 {
     QMessageBox::information(this, "QFire Notes", msg);
+}
+
+void MainWindow::refresh()
+{
+    ui->listWidget->clear();
+    ui->lineNoteTitle->clear();
+    ui->plainTextEdit->clear();
+    ui->btnEditNote->setEnabled(false);
+    ui->btnDeleteNote->setEnabled(false);
+    getAllNotes(authUser);
 }
 
 void MainWindow::getAllNotes(QString user)
 {
     qDebug() << "getting all notes" << user;
 
-    netRepGetNotes = netMngNotes->get(QNetworkRequest(QUrl("https://qfirenotes-default-rtdb.firebaseio.com/users/hasiru/notenames.json")));
+    QString url = "https://qfirenotes-default-rtdb.firebaseio.com/users/" + user + "/notenames.json";
+    qDebug() << url << "678";
+    netRepGetNotes = netMngNotes->get(QNetworkRequest(QUrl(url)));
     connect(netRepGetNotes, &QNetworkReply::readyRead, this, &MainWindow::readAllNotes );
-
-    qDebug() << "got all notes";
 }
 
 
 void MainWindow::showNoteList(QStringList newList)
 {
+    ui->listWidget->clear();
     for (auto& i : newList)
     {
         qDebug() << i;
@@ -135,47 +155,60 @@ void MainWindow::showNoteList(QStringList newList)
             //ui->listWidget->addItem("1234");
         }
     }
+
 }
 
 void MainWindow::readAllNotes()
 {
-    //qDebug() << netRepGetNotes->readAll();
+    QByteArray noteListQb = netRepGetNotes->readAll();
+    qDebug() << noteListQb;
 
-    QByteArray namelistbarr = netRepGetNotes->readAll();
-    QString nameliststr = QString(namelistbarr);
-    qDebug() << nameliststr;
-    nameliststr.remove('"');
-    nameliststr.remove('[');
-    nameliststr.remove(']');
-    qDebug() << nameliststr;
+    if(noteListQb != "null"){
 
-    QStringList noteNameList = nameliststr.split(",");
-    qDebug() << noteNameList;
+        QString noteListStr = QString(noteListQb);
+        //qDebug() << noteListStr;
+        noteListStr.remove('"');
+        noteListStr.remove('[');
+        noteListStr.remove(']');
+        noteListStr.remove('{');
+        noteListStr.remove('}');
+        noteListStr.remove('~');
+        noteListStr.remove(':');
+        //qDebug() << noteListStr;
 
-    //MainWindow test;
-    showNoteList(noteNameList);
+        QStringList noteNameList = noteListStr.split(",");
+        //qDebug() << noteNameList;
+        noteList = noteNameList;
+        showNoteList(noteNameList);
+    }
+    else{
+        qDebug() << noteListQb << "345";
+        showAlert("You don't have any notes yet. Create your first note!");
+    }
+
 
 }
 
 void MainWindow::showNote()
 {
-    QByteArray namelistbarr = netRepShowNote->readAll();
-    QString nameliststr = QString(namelistbarr);
-    qDebug() << nameliststr;
-    nameliststr.remove('"');
-    nameliststr.remove('[');
-    nameliststr.remove(']');
-    qDebug() << nameliststr;
+    QByteArray showNoteQb = netRepShowNote->readAll();
+    QString showNoteStr = QString(showNoteQb);
+    showNoteStr.remove('"');
 
-    QStringList newNote = nameliststr.split(",");
-    qDebug() << newNote;
-    ui->plainTextEdit->setPlainText(nameliststr);
+    if(!editOn){
+        ui->plainTextEdit->setPlainText(showNoteStr);
+    }
+    else{
+        ui->plainNoteText->setPlainText(showNoteStr);
+    }
+
 }
 
 void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
 {
     qDebug() << item->text();
     selectedNote = item->text();
+    ui->lineNoteTitle->setText(selectedNote);
     getNote(selectedNote);
 }
 
@@ -195,14 +228,11 @@ void MainWindow::getNote(QString notename)
 
 void MainWindow::pushNote()
 {
-    QString urlp1 = "https://qfirenotes-default-rtdb.firebaseio.com/users/";
-    QString urlp2 = "hasiru/";
-    QString urlp3 = "notes/";
-    QString urlp4 = ui->lineAddTitle->text();
-    QString urlp5 = ".json";
-    QString url = urlp1+urlp2+urlp3+urlp4+urlp5;
 
-    //QString newMsgText = ui->msgLineEdit->text();
+    QString newtitle = ui->lineAddTitle->text();
+
+    QString url = "https://qfirenotes-default-rtdb.firebaseio.com/users/" + authUser + "/notes/" + newtitle + ".json";
+
     QVariantMap newNoteVM;
     newNoteVM["content"] = ui->plainNoteText->toPlainText();
     QJsonDocument newNoteJson = QJsonDocument::fromVariant(newNoteVM);
@@ -211,26 +241,82 @@ void MainWindow::pushNote()
     newNoteReq.setHeader(QNetworkRequest::ContentTypeHeader, QString("application/json"));
     netMngNotes->put(newNoteReq, newNoteJson.toJson());
 
+    QString url2 = "https://qfirenotes-default-rtdb.firebaseio.com/users/" + authUser + "/notenames.json";
+
+    QVariantMap uplistVM;
+
+    if(!editOn){
+       noteList.append(newtitle);
+    }
+    else{
+        editOn = false;
+    }
+
+    for (auto& i : noteList)
+    {
+        qDebug() << i;
+        if(i != "null"){
+            uplistVM[i] = "~";
+        }
+    }
+
+    QJsonDocument upListJson = QJsonDocument::fromVariant(uplistVM);
+
+    QNetworkRequest upListReq((QUrl(url2)));
+    upListReq.setHeader(QNetworkRequest::ContentTypeHeader, QString("application/json"));
+    netMngNotes->put(upListReq, upListJson.toJson());
+
     ui->lineAddTitle->clear();
     ui->plainNoteText->clear();
     ui->stackedWidget->setCurrentIndex(3);
 
+    ui->labelSaveEdit->setText("Create a note");
+    ui->lineAddTitle->setReadOnly(false);
+    ui->btnSaveNote->setText("Save New Note");
+
+    showAlert("Note Saved!");
+    refresh();
+
+}
+
+void MainWindow::editNote()
+{
+    editOn = true;
+    ui->stackedWidget->setCurrentIndex(4);
+    ui->labelSaveEdit->setText("Edit your note. (note title can't be changed)");
+    ui->lineAddTitle->setReadOnly(true);
+    ui->btnSaveNote->setText("Save Edited Note");
+    ui->lineAddTitle->setText(selectedNote);
+    getNote(selectedNote);
 }
 
 void MainWindow::deleteNote()
 {
-    QString urlp1 = "https://qfirenotes-default-rtdb.firebaseio.com/users/";
-    QString urlp2 = "hasiru/";
-    QString urlp3 = "notes/";
-    QString urlp4 = selectedNote;
-    QString urlp5 = ".json";
-    QString url = urlp1+urlp2+urlp3+urlp4+urlp5;
+    QString url = "https://qfirenotes-default-rtdb.firebaseio.com/users/" + authUser + "notes/" + selectedNote + ".json";
+    netDelNote = netMngNotes->deleteResource(QNetworkRequest(QUrl(url)));
 
-    qDebug() << url;
-    auto myvar1 = QDateTime::currentDateTime().time();
-    qDebug() << myvar1;
-    netRepShowNote = netMngNotes->deleteResource(QNetworkRequest(QUrl(url)));
+    QVariantMap uplistVM;
+    noteList.removeAll(selectedNote);
+
+    for (auto& i : noteList)
+    {
+        qDebug() << i;
+        if(i != "null"){
+            uplistVM[i] = "~";
+        }
+    }
+
+    QString url2 = "https://qfirenotes-default-rtdb.firebaseio.com/users/" + authUser + "/notenames.json";
+
+    QJsonDocument upListJson = QJsonDocument::fromVariant(uplistVM);
+    QNetworkRequest upListReq((QUrl(url2)));
+    upListReq.setHeader(QNetworkRequest::ContentTypeHeader, QString("application/json"));
+    netMngNotes->put(upListReq, upListJson.toJson());
+
+    showAlert("Note Deleted!");
+    refresh();
 }
+
 
 //funtion buttons
 void MainWindow::on_btnSignupCreate_clicked()
@@ -247,14 +333,34 @@ void MainWindow::on_btnSignupCreate_clicked()
     }
 }
 
+
 void MainWindow::on_btnLogin_clicked()
 {
-    loginAuth();
+    if(ui->lineLoginUN->text() == "" || ui->lineLoginPW->text() == ""){
+        showAlert("Please fill all fields!");
+    }
+    else{
+        loginAuth();
+    }
+
 }
+
 
 void MainWindow::on_btnSaveNote_clicked()
 {
     pushNote();
+}
+
+
+void MainWindow::on_btnDeleteNote_clicked()
+{
+    deleteNote();
+}
+
+
+void MainWindow::on_btnEditNote_clicked()
+{
+    editNote();
 }
 
 
@@ -291,7 +397,13 @@ void MainWindow::on_btnNavCreate_clicked()
 
 void MainWindow::on_btnCancelSave_clicked()
 {
+    if(editOn){
+        editOn = false;
+    }
     ui->stackedWidget->setCurrentIndex(3);
+    ui->labelSaveEdit->setText("Create a note");
+    ui->lineAddTitle->setReadOnly(false);
+    ui->btnSaveNote->setText("Save New Note");
 }
 
 
@@ -299,4 +411,14 @@ void MainWindow::on_btnCancelSave_clicked()
 
 
 
+void MainWindow::on_btnAuthLogout_clicked()
+{
+
+}
+
+
+void MainWindow::on_listWidget_itemSelectionChanged()
+{
+    enableEditDelete();
+}
 
