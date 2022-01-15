@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    QFile stylefile(":/style/res/style/Diffnes.qss");
+    QFile stylefile(":/style/res/style/cloudnotestyle.qss");
     stylefile.open(QFile::ReadOnly);
     QString stylesheet = QLatin1String(stylefile.readAll());
     a.setStyleSheet(stylesheet);

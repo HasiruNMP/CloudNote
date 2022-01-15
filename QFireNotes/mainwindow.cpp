@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QtWidgets>
 #include <QRegularExpression>
+#include <QPixmap>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -9,6 +10,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     ui->setupUi(this);
     ui->stackedWidget->setCurrentIndex(5);
+
+    QPixmap logo1(":/img/res/img/cloudnote.png");
+    ui->labelLogo->setPixmap(logo1.scaled(250,250,Qt::KeepAspectRatio));
+    ui->labelLogin->setPixmap(logo1.scaled(120,120,Qt::KeepAspectRatio));
+    ui->labelSignup->setPixmap(logo1.scaled(120,120,Qt::KeepAspectRatio));
+
+    ui->labelLogo2->setPixmap(logo1.scaled(120,120,Qt::KeepAspectRatio));
+
 
     QRegularExpression rxUN("[A-Za-z0-9]{4,20}");
     QValidator *valiUN = new QRegularExpressionValidator(rxUN, this);
@@ -67,7 +76,7 @@ void MainWindow::readAuthFile()
     }
     else
     {
-        ui->stackedWidget->setCurrentIndex(0);
+       ui->stackedWidget->setCurrentIndex(0);
     }
 
 
@@ -224,7 +233,7 @@ void MainWindow::enableEditDelete()
 
 void MainWindow::showAlert(QString msg)
 {
-    QMessageBox::information(this, "QFire Notes", msg);
+    QMessageBox::information(this, "CloudNote", msg);
 }
 
 void MainWindow::refresh()
@@ -402,9 +411,9 @@ void MainWindow::pushNote()
     ui->plainNoteText->clear();
     ui->stackedWidget->setCurrentIndex(3);
 
-    ui->labelSaveEdit->setText("Create a note");
+    ui->labelSaveEdit->setText("Create New Note");
     ui->lineAddTitle->setReadOnly(false);
-    ui->btnSaveNote->setText("Save New Note");
+    ui->btnSaveNote->setText("SAVE");
 
     showAlert("Note Saved!");
     refresh();
@@ -415,9 +424,9 @@ void MainWindow::editNote()
 {
     editOn = true;
     ui->stackedWidget->setCurrentIndex(4);
-    ui->labelSaveEdit->setText("Edit your note. (note title can't be changed)");
+    ui->labelSaveEdit->setText("Edit Your Note. (note title can't be changed)");
     ui->lineAddTitle->setReadOnly(true);
-    ui->btnSaveNote->setText("Save Edited Note");
+    ui->btnSaveNote->setText("SAVE");
     ui->lineAddTitle->setText(selectedNote);
     getNote(selectedNote);
 }
@@ -547,9 +556,9 @@ void MainWindow::on_btnCancelSave_clicked()
         editOn = false;
     }
     ui->stackedWidget->setCurrentIndex(3);
-    ui->labelSaveEdit->setText("Create a note");
+    ui->labelSaveEdit->setText("Create New Note");
     ui->lineAddTitle->setReadOnly(false);
-    ui->btnSaveNote->setText("Save New Note");
+    ui->btnSaveNote->setText("SAVE");
 }
 
 

@@ -218,9 +218,10 @@ QLineEdit
         background-color: #f1f2f6;
         color : #2f3542;
         border: 1px solid #ced6e0;
-	padding: 3px;
+        padding: 5px;
 	padding-left: 5px;
 	border-radius: 4px;
+        selection-background-color: #a4b0be;
 
 }
 
@@ -234,9 +235,9 @@ QPlainTextEdit
 	padding: 3px;
 	padding-left: 5px;
 	border-radius: 4px;
+        selection-background-color: #a4b0be;
 
 }
-
 
 /*-----QToolBox-----*/
 QToolBox
@@ -666,7 +667,7 @@ QListView::item:selected:active
 
 
 QListView::item:hover {
-    background-color: #5e5e5e;
+    background-color: #747d8c;
     border: none;
     color: #000;
 
