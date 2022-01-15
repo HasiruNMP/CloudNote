@@ -159,13 +159,12 @@
               <widget class="QLabel" name="label_2">
                <property name="font">
                 <font>
-                 <pointsize>11</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
+                 <family>Segoe UI</family>
+                 <pointsize>12</pointsize>
                 </font>
                </property>
                <property name="text">
-                <string>Login using your nicname and password</string>
+                <string>LOGIN USING YOUR USERNAME AND PASSWORD</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>
@@ -207,11 +206,15 @@
                  <widget class="QLineEdit" name="lineLoginUN">
                   <property name="font">
                    <font>
-                    <pointsize>12</pointsize>
+                    <family>Segoe UI</family>
+                    <pointsize>10</pointsize>
                    </font>
                   </property>
+                  <property name="text">
+                   <string/>
+                  </property>
                   <property name="placeholderText">
-                   <string>Username</string>
+                   <string>username</string>
                   </property>
                  </widget>
                 </item>
@@ -219,11 +222,15 @@
                  <widget class="QLineEdit" name="lineLoginPW">
                   <property name="font">
                    <font>
-                    <pointsize>12</pointsize>
+                    <family>Segoe UI</family>
+                    <pointsize>10</pointsize>
                    </font>
                   </property>
+                  <property name="echoMode">
+                   <enum>QLineEdit::Password</enum>
+                  </property>
                   <property name="placeholderText">
-                   <string>Password</string>
+                   <string>password</string>
                   </property>
                  </widget>
                 </item>
@@ -275,11 +282,12 @@
                  <widget class="QPushButton" name="btnLogin">
                   <property name="font">
                    <font>
-                    <pointsize>12</pointsize>
+                    <family>Segoe UI</family>
+                    <pointsize>10</pointsize>
                    </font>
                   </property>
                   <property name="text">
-                   <string>Login</string>
+                   <string>LOGIN</string>
                   </property>
                  </widget>
                 </item>
@@ -287,11 +295,12 @@
                  <widget class="QPushButton" name="btnCancelLogin">
                   <property name="font">
                    <font>
-                    <pointsize>12</pointsize>
+                    <family>Segoe UI</family>
+                    <pointsize>10</pointsize>
                    </font>
                   </property>
                   <property name="text">
-                   <string>Cancel</string>
+                   <string>CANCEL</string>
                   </property>
                  </widget>
                 </item>

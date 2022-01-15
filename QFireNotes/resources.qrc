@@ -1,8 +1,14 @@
 <RCC>
     <qresource prefix="/style">
-        <file>res/style/Cstartpage.qss</file>
         <file>res/style/Devsion.qss</file>
-        <file>res/style/Fibrary.qss</file>
+        <file>res/style/Diffnes.qss</file>
+        <file>res/style/Gravira.qss</file>
+        <file>res/style/Hookmark.qss</file>
+        <file>res/style/Integrid.qss</file>
+        <file>res/style/Perstfic.qss</file>
+        <file>res/style/SpyBot.qss</file>
+        <file>res/style/Wstartpage.qss</file>
+        <file>res/style/Diplaytap.qss</file>
     </qresource>
     <qresource prefix="/img"/>
 </RCC>

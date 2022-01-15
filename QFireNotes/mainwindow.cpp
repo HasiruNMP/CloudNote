@@ -10,18 +10,24 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->setupUi(this);
     ui->stackedWidget->setCurrentIndex(5);
 
+    QRegularExpression rxUN("[A-Za-z0-9]{4,20}");
+    QValidator *valiUN = new QRegularExpressionValidator(rxUN, this);
+
+    QRegularExpression rxPW("[A-Za-z0-9]{6,20}");
+    QValidator *valiPW = new QRegularExpressionValidator(rxPW, this);
+
+    QRegularExpression rxTitle("[A-Za-z0-9\\s]{1,100}");
+    QValidator *valiTitle = new QRegularExpressionValidator(rxTitle, this);
+
+    ui->lineLoginUN->setValidator(valiUN);
+    ui->lineLoginPW->setValidator(valiPW);
+    ui->lineSignupUN->setValidator(valiUN);
+    ui->lineSignupPW->setValidator(valiPW);
+    ui->lineSignupPWRe->setValidator(valiPW);
+    ui->lineAddTitle->setValidator(valiTitle);
+
     readAuthFile();
 
-
-
-
-    //rx = QRegularExpression("/^[a-zA-Z\s]*$/g");
-    //validator = new QRegularExpressionValidator(rx, this);
-    //ui->lineAddTitle->setValidator(validator);
-
-
-    //connect(ui->listWidget, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(onListMailItemClicked(QListWidgetItem*)));
-    //connect(ui->listWidget->selectionModel(),SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this,SLOT(enableEditDelete()));
 }
 
 MainWindow::~MainWindow()
@@ -454,6 +460,10 @@ void MainWindow::on_btnSignupCreate_clicked()
     {
         showAlert("passwords don't match");
     }
+    else if(!(ui->lineSignupUN->text().length() > 4 && ui->lineSignupUN->text().length() > 6))
+    {
+        showAlert("Username lenth should be 4-20 \n Password length should be 6-20");
+    }
     else{
         validateUsername();
     }
@@ -474,15 +484,15 @@ void MainWindow::on_btnLogin_clicked()
 
 void MainWindow::on_btnSaveNote_clicked()
 {
-    QString noteT = ui->lineAddTitle->text();
 
-    if(noteT.contains("~") || noteT.contains("[") || noteT.contains("]") || noteT.contains("{") || noteT.contains("}") || noteT.contains(":") || noteT.contains('"') || noteT.contains("\\") || noteT.contains("/")){
-        //qDebug() << "invalid title";
+    if(ui->lineAddTitle->text().length() > 0 && ui->plainNoteText->toPlainText().length() > 0){
+        pushNote();
+        //qDebug() << "valid title";
     }
     else
     {
-        pushNote();
-        //qDebug() << "valid title";
+        showAlert("Please enter all fields");
+        //qDebug() << "invalid title";
     }
     //
 }
