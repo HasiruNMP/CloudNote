@@ -60,11 +60,13 @@ private:
     QString selectedNote;
     QString newUN;
     QString newPW;
+    QString newName;
     QString loginUN;
     QString loginPW;
     QString storedUN;
     QString storedPW;
     QString authUser;
+    QString authName;
     QStringList noteList;
     bool editOn = false;
     QRegularExpression rx;
@@ -87,6 +89,7 @@ private:
     void logout();
     void readAuthFile();
     void setAuthFile(QStringList authstrlist);
+    bool checkTitle(QString title);
 };
 
 #endif // MAINWINDOW_H

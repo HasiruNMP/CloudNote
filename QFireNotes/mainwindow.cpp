@@ -46,7 +46,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::readAuthFile()
 {
-    //qDebug() << "890";
+    qDebug() << "890";
 
     QStringList authList;
 
@@ -64,9 +64,9 @@ void MainWindow::readAuthFile()
         if(authList[0]=="loggedin\n")
         {
             storedUN = authList[1].remove("\n");
-            //qDebug() << authList[1].remove("\n");
+            qDebug() << authList[1].remove("\n");
             storedPW = authList[2].remove("\n");
-            //qDebug() << authList[2].remove("\n");
+            qDebug() << authList[2].remove("\n");
             loginAuthAuto();
         }
         else
@@ -96,10 +96,24 @@ void MainWindow::setAuthFile(QStringList authstrlist)
     newauthfile.close();
 }
 
+bool MainWindow::checkTitle(QString title)
+{
+    for (auto& i : noteList)
+    {
+        qDebug() << i << "note";
+        if(i == title){
+            return false;
+            break;
+        }
+    }
+    return true;
+}
+
 void MainWindow::validateUsername()
 {
     newUN = ui->lineSignupUN->text();
     newPW = ui->lineSignupPW->text();
+    newName = ui->lineSignupName->text();
 
     QString url = "https://qfirenotes-default-rtdb.firebaseio.com/users/" + newUN + "/auth/username.json";
     //qDebug() << url;
@@ -129,6 +143,7 @@ void MainWindow::createAccount()
     QVariantMap newAccVM;
     newAccVM["username"] = newUN;
     newAccVM["password"] = newPW;
+    newAccVM["name"] = newName;
     QJsonDocument newAccJson = QJsonDocument::fromVariant(newAccVM);
 
     QString url = "https://qfirenotes-default-rtdb.firebaseio.com/users/" + newUN + "/auth.json";
@@ -167,18 +182,20 @@ void MainWindow::readLAuth()
     auth.remove('\\');
     QRegularExpression separator("[(,|:|)]");
     QStringList unamepw = auth.split(separator);
-    //qDebug() << unamepw;
-    if(loginUN == unamepw[3] && loginPW == unamepw[1])
+    qDebug() << unamepw;
+    if(loginUN == unamepw[5] && loginPW == unamepw[3])
     {
         //qDebug() << "234";
         authUser = loginUN;
+        authName = unamepw[1];
         QStringList auth = {"loggedin",loginUN,loginPW};
         setAuthFile(auth);
-        showAlert("Login Succesfull!");
+        showAlert("Greetings " + authName + "! \nLogin Succesfull.");
         ui->lineLoginUN->clear();
         ui->lineLoginPW->clear();
         ui->stackedWidget->setCurrentIndex(3);
         getAllNotes(authUser);
+        ui->labelUsersNotes->setText(authName + "'s Notes");
     }
     else
     {
@@ -210,12 +227,14 @@ void MainWindow::readLAuthAuto()
     QRegularExpression separator("[(,|:|)]");
     QStringList unamepw = auth.split(separator);
     //qDebug() << unamepw;
-    if(storedUN == unamepw[3] && storedPW == unamepw[1])
+    if(storedUN == unamepw[5] && storedPW == unamepw[3])
     {
         //qDebug() << "234";
         authUser = storedUN;
+        authName = unamepw[1];
         ui->stackedWidget->setCurrentIndex(3);
         getAllNotes(authUser);
+        ui->labelUsersNotes->setText(authName + "'s Notes");
     }
     else
     {
@@ -307,7 +326,7 @@ void MainWindow::readAllNotes()
     if(noteListQb != "null"){
 
         QString noteListStr = QString(noteListQb);
-        //qDebug() << noteListStr;
+        qDebug() << noteListStr;
         noteListStr.remove('"');
         noteListStr.remove('[');
         noteListStr.remove(']');
@@ -334,6 +353,7 @@ void MainWindow::showNote()
 {
     QByteArray showNoteQb = netRepShowNote->readAll();
     QString showNoteStr = QString(showNoteQb);
+    qDebug() << showNoteStr;
     showNoteStr.remove('"');
 
     if(!editOn){
@@ -355,14 +375,10 @@ void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
 
 void MainWindow::getNote(QString notename)
 {
-    QString urlp1 = "https://qfirenotes-default-rtdb.firebaseio.com/users/";
-    QString urlp2 = "hasiru/";
-    QString urlp3 = "notes/";
-    QString urlp4 = notename;
-    QString urlp5 = "/content.json";
-    QString url = urlp1+urlp2+urlp3+urlp4+urlp5;
 
-    //qDebug() << url;
+    QString url = "https://qfirenotes-default-rtdb.firebaseio.com/users/" + authUser + "/notes/" + notename + "/content.json";
+
+    qDebug() << url;
     netRepShowNote = netMngNotes->get(QNetworkRequest(QUrl(url)));
     connect(netRepShowNote, &QNetworkReply::readyRead, this, &MainWindow::showNote);
 }
@@ -495,7 +511,15 @@ void MainWindow::on_btnSaveNote_clicked()
 {
 
     if(ui->lineAddTitle->text().length() > 0 && ui->plainNoteText->toPlainText().length() > 0){
-        pushNote();
+        if(checkTitle(ui->lineAddTitle->text()))
+        {
+            qDebug() << "Note title is unique";
+            pushNote();
+        }
+        else
+        {
+            showAlert("You already have a note by that title! Enter a different title.");
+        }
         //qDebug() << "valid title";
     }
     else

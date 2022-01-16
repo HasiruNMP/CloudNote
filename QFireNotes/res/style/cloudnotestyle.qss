@@ -30,6 +30,7 @@ QWidget
 
 }
 
+QFrame{border: none;}
 
 /*-----QLabel-----*/
 QLabel
