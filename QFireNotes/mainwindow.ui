@@ -18,7 +18,7 @@
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>5</number>
       </property>
       <widget class="QWidget" name="page">
        <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="2,5,2">
@@ -667,7 +667,17 @@
       <widget class="QWidget" name="page_4">
        <layout class="QVBoxLayout" name="verticalLayout_16" stretch="1,10,0">
         <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_24" stretch="9,0,1">
+         <layout class="QHBoxLayout" name="horizontalLayout_24" stretch="1,15,2,2">
+          <item>
+           <widget class="QLabel" name="noteLogo">
+            <property name="text">
+             <string>Logo</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QLabel" name="labelUsersNotes">
             <property name="font">

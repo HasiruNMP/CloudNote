@@ -6,5 +6,6 @@
         <file>res/img/appicon.ico</file>
         <file>res/img/applogo.png</file>
         <file>res/img/cloudnote.png</file>
+        <file>res/img/loading.gif</file>
     </qresource>
 </RCC>

@@ -8,15 +8,22 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     netMngNotes = new QNetworkAccessManager(this);
 
+    QMovie *movie = new QMovie(":/img/res/img/loading.gif");
+
     ui->setupUi(this);
     ui->stackedWidget->setCurrentIndex(5);
+    ui->labelGif->setMovie(movie);
+    movie->start();
+
 
     QPixmap logo1(":/img/res/img/cloudnote.png");
     ui->labelLogo->setPixmap(logo1.scaled(250,250,Qt::KeepAspectRatio));
     ui->labelLogin->setPixmap(logo1.scaled(120,120,Qt::KeepAspectRatio));
     ui->labelSignup->setPixmap(logo1.scaled(120,120,Qt::KeepAspectRatio));
-
     ui->labelLogo2->setPixmap(logo1.scaled(120,120,Qt::KeepAspectRatio));
+
+    QPixmap logo2(":/img/res/img/applogo.png");
+    ui->noteLogo->setPixmap(logo2.scaled(28,28,Qt::KeepAspectRatio));
 
 
     QRegularExpression rxUN("[A-Za-z0-9]{4,20}");
@@ -94,6 +101,7 @@ void MainWindow::setAuthFile(QStringList authstrlist)
         stream << authstrlist[2] << "\n";
     }
     newauthfile.close();
+    ui->stackedWidget->setCurrentIndex(0);
 }
 
 bool MainWindow::checkTitle(QString title)
@@ -287,7 +295,14 @@ void MainWindow::logout()
 {
     qDebug() << "logging out";
     QStringList lout = {"loggedout","null","null"};
-    ui->stackedWidget->setCurrentIndex(0);
+    ui->stackedWidget->setCurrentIndex(5);
+
+    for (int i = 0; i < noteList.size(); ++i)
+    {
+        qDebug() << noteList[i] << "before";
+        noteList[i] = "null";
+        qDebug() << noteList[i] << "after";
+    }
     setAuthFile(lout);
 }
 
@@ -485,7 +500,7 @@ void MainWindow::on_btnSignupCreate_clicked()
     {
         showAlert("passwords don't match");
     }
-    else if(!(ui->lineSignupUN->text().length() > 4 && ui->lineSignupUN->text().length() > 6))
+    else if(!(ui->lineSignupUN->text().length() >= 4 && ui->lineSignupPW->text().length() >= 6))
     {
         showAlert("Username lenth should be 4-20 \n Password length should be 6-20");
     }
@@ -511,15 +526,23 @@ void MainWindow::on_btnSaveNote_clicked()
 {
 
     if(ui->lineAddTitle->text().length() > 0 && ui->plainNoteText->toPlainText().length() > 0){
-        if(checkTitle(ui->lineAddTitle->text()))
-        {
-            qDebug() << "Note title is unique";
+
+        if(editOn){
             pushNote();
         }
-        else
-        {
-            showAlert("You already have a note by that title! Enter a different title.");
+        else{
+            if(checkTitle(ui->lineAddTitle->text()))
+            {
+                pushNote();
+                qDebug() << "Note title is unique";
+
+            }
+            else
+            {
+                showAlert("You already have a note by that title! Enter a different title.");
+            }
         }
+
         //qDebug() << "valid title";
     }
     else
