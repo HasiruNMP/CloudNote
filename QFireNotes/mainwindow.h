@@ -24,7 +24,6 @@ public:
     QStringList noteNameList;
 
 public slots:
-    void showNoteList(QStringList newList);
     void readAllNotes();
     void showNote();
     void readUNVali();
@@ -77,6 +76,7 @@ private:
     void pushNote();
     void editNote();
     void deleteNote();
+    void showNoteList();
     void validateUsername();
     void createAccount();
     void loginAuth();
@@ -90,6 +90,7 @@ private:
     void readAuthFile();
     void setAuthFile(QStringList authstrlist);
     bool checkTitle(QString title);
+
 };
 
 #endif // MAINWINDOW_H

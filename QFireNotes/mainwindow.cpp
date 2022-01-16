@@ -182,36 +182,47 @@ void MainWindow::loginAuth()
 void MainWindow::readLAuth()
 {
     QByteArray authResult = netRepAuth->readAll();
-    //qDebug() << authResult << "456";
-    QString auth = QString(authResult);
-    auth.remove('"');
-    auth.remove('{');
-    auth.remove('}');
-    auth.remove('\\');
-    QRegularExpression separator("[(,|:|)]");
-    QStringList unamepw = auth.split(separator);
-    qDebug() << unamepw;
-    if(loginUN == unamepw[5] && loginPW == unamepw[3])
+    qDebug() << authResult << "456";
+    if(authResult != "null")
     {
-        //qDebug() << "234";
-        authUser = loginUN;
-        authName = unamepw[1];
-        QStringList auth = {"loggedin",loginUN,loginPW};
-        setAuthFile(auth);
-        showAlert("Greetings " + authName + "! \nLogin Succesfull.");
-        ui->lineLoginUN->clear();
-        ui->lineLoginPW->clear();
-        ui->stackedWidget->setCurrentIndex(3);
-        getAllNotes(authUser);
-        ui->labelUsersNotes->setText(authName + "'s Notes");
+        QString auth = QString(authResult);
+        auth.remove('"');
+        auth.remove('{');
+        auth.remove('}');
+        auth.remove('\\');
+        QRegularExpression separator("[(,|:|)]");
+        QStringList unamepw = auth.split(separator);
+        qDebug() << unamepw;
+        if(loginUN == unamepw[5] && loginPW == unamepw[3])
+        {
+            qDebug() << "234";
+            authUser = loginUN;
+            authName = unamepw[1];
+            QStringList auth = {"loggedin",loginUN,loginPW};
+            setAuthFile(auth);
+            showAlert("Greetings " + authName + "! \nLogin Succesfull.");
+            ui->lineLoginUN->clear();
+            ui->lineLoginPW->clear();
+            //ui->stackedWidget->setCurrentIndex(3);
+            //getAllNotes(authUser);
+            //ui->labelUsersNotes->setText(authName + "'s Notes");
+        }
+        else
+        {
+            qDebug() << "invalid username or password";
+            ui->lineLoginUN->clear();
+            ui->lineLoginPW->clear();
+            showAlert("Invalid username or password!");
+        }
     }
     else
     {
-        //qDebug() << "invalid username or password";
+        qDebug() << "invalid username";
         ui->lineLoginUN->clear();
         ui->lineLoginPW->clear();
-        showAlert("Invalid username or password!");
+        showAlert("That username doesn't exist!");
     }
+
 
 }
 
@@ -296,13 +307,15 @@ void MainWindow::logout()
     qDebug() << "logging out";
     QStringList lout = {"loggedout","null","null"};
     ui->stackedWidget->setCurrentIndex(5);
+    ui->listWidget->clear();
 
-    for (int i = 0; i < noteList.size(); ++i)
+    /*for (int i = 0; i < noteList.size(); ++i)
     {
         qDebug() << noteList[i] << "before";
         noteList[i] = "null";
         qDebug() << noteList[i] << "after";
-    }
+    }*/
+    noteList.clear();
     setAuthFile(lout);
 }
 
@@ -319,10 +332,10 @@ void MainWindow::getAllNotes(QString user)
 }
 
 
-void MainWindow::showNoteList(QStringList newList)
+void MainWindow::showNoteList()
 {
     ui->listWidget->clear();
-    for (auto& i : newList)
+    for (auto& i : noteList)
     {
         //qDebug() << i;
         if(i != "null"){
@@ -354,7 +367,7 @@ void MainWindow::readAllNotes()
         QStringList noteNameList = noteListStr.split(",");
         //qDebug() << noteNameList;
         noteList = noteNameList;
-        showNoteList(noteNameList);
+        showNoteList();
     }
     else{
         //qDebug() << noteListQb << "345";
