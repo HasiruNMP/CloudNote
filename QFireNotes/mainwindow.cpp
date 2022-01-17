@@ -6,35 +6,32 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
+    //creating the NetworkAccessManager object
     netMngNotes = new QNetworkAccessManager(this);
 
+    //setting up loading screen animation
     QMovie *movie = new QMovie(":/img/res/img/loading.gif");
-
     ui->setupUi(this);
-    ui->stackedWidget->setCurrentIndex(5);
+    ui->stackedWidget->setCurrentIndex(0);
     ui->labelGif->setMovie(movie);
     movie->start();
 
-
+    //setting up the in labels
     QPixmap logo1(":/img/res/img/cloudnote.png");
     ui->labelLogo->setPixmap(logo1.scaled(250,250,Qt::KeepAspectRatio));
     ui->labelLogin->setPixmap(logo1.scaled(120,120,Qt::KeepAspectRatio));
     ui->labelSignup->setPixmap(logo1.scaled(120,120,Qt::KeepAspectRatio));
     ui->labelLogo2->setPixmap(logo1.scaled(120,120,Qt::KeepAspectRatio));
-
     QPixmap logo2(":/img/res/img/applogo.png");
     ui->noteLogo->setPixmap(logo2.scaled(28,28,Qt::KeepAspectRatio));
 
-
+    //setting up Regex in LineEdits
     QRegularExpression rxUN("[A-Za-z0-9]{4,20}");
     QValidator *valiUN = new QRegularExpressionValidator(rxUN, this);
-
     QRegularExpression rxPW("[A-Za-z0-9]{6,20}");
     QValidator *valiPW = new QRegularExpressionValidator(rxPW, this);
-
     QRegularExpression rxTitle("[A-Za-z0-9\\s]{1,100}");
     QValidator *valiTitle = new QRegularExpressionValidator(rxTitle, this);
-
     ui->lineLoginUN->setValidator(valiUN);
     ui->lineLoginPW->setValidator(valiPW);
     ui->lineSignupUN->setValidator(valiUN);
@@ -42,7 +39,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->lineSignupPWRe->setValidator(valiPW);
     ui->lineAddTitle->setValidator(valiTitle);
 
-    readAuthFile();
+    //check authentication details of the user
+    //readAuthFile();
 
 }
 
@@ -51,6 +49,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+//read authuser.txt file for automatic login
 void MainWindow::readAuthFile()
 {
     qDebug() << "890";
@@ -91,6 +90,7 @@ void MainWindow::readAuthFile()
 
 }
 
+//write authuser.txt file when logging in or out
 void MainWindow::setAuthFile(QStringList authstrlist)
 {
     QFile newauthfile("authuser.txt");
@@ -104,6 +104,7 @@ void MainWindow::setAuthFile(QStringList authstrlist)
     ui->stackedWidget->setCurrentIndex(0);
 }
 
+//checks if the user already has a note with the given Qstring title (note titles are unique)
 bool MainWindow::checkTitle(QString title)
 {
     for (auto& i : noteList)
@@ -117,6 +118,8 @@ bool MainWindow::checkTitle(QString title)
     return true;
 }
 
+
+//check if a username is already taken or note when signing up
 void MainWindow::validateUsername()
 {
     newUN = ui->lineSignupUN->text();
@@ -131,6 +134,7 @@ void MainWindow::validateUsername()
 
 }
 
+//reads network reply of the network request sent from validateUsername()
 void MainWindow::readUNVali()
 {
     QByteArray valResult = netRepValUN->readAll();
@@ -146,6 +150,7 @@ void MainWindow::readUNVali()
     }
 }
 
+//create a new user account in the database
 void MainWindow::createAccount()
 {
     QVariantMap newAccVM;
@@ -168,6 +173,7 @@ void MainWindow::createAccount()
     ui->stackedWidget->setCurrentIndex(1);
 }
 
+//gets the given username and passwords by user
 void MainWindow::loginAuth()
 {
     loginUN = ui->lineLoginUN->text();
@@ -179,6 +185,7 @@ void MainWindow::loginAuth()
 
 }
 
+//reads network reply of the network request sent from loginAuth()
 void MainWindow::readLAuth()
 {
     QByteArray authResult = netRepAuth->readAll();
@@ -226,6 +233,7 @@ void MainWindow::readLAuth()
 
 }
 
+//automatic login by the credentials stored in the text file
 void MainWindow::loginAuthAuto()
 {
     QString url = "https://qfirenotes-default-rtdb.firebaseio.com/users/" + storedUN + "/auth.json";
@@ -234,6 +242,7 @@ void MainWindow::loginAuthAuto()
 
 }
 
+//reads network reply of the network request sent from loginAuthAuto()
 void MainWindow::readLAuthAuto()
 {
     QByteArray authResult = netRepAuthAuto->readAll();
@@ -263,17 +272,20 @@ void MainWindow::readLAuthAuto()
 
 }
 
+//enables edit and delete buttons once a note has been selected from the list
 void MainWindow::enableEditDelete()
 {
     ui->btnEditNote->setEnabled(true);
     ui->btnDeleteNote->setEnabled(true);
 }
 
+//shows an QMessageBox alert with the given String
 void MainWindow::showAlert(QString msg)
 {
     QMessageBox::information(this, "CloudNote", msg);
 }
 
+//refreshes the view and gets data again from the database
 void MainWindow::refresh()
 {
     ui->listWidget->clear();
@@ -284,6 +296,7 @@ void MainWindow::refresh()
     getAllNotes(authUser);
 }
 
+//get confirmation before deleting a note
 void MainWindow::confirmDelete()
 {
     QMessageBox::StandardButton reply = QMessageBox::question(this,"Confirm Delete", "Are you sure you want to delete the selected note?", QMessageBox::Yes | QMessageBox::No);
@@ -293,6 +306,7 @@ void MainWindow::confirmDelete()
     }
 }
 
+//get confirmation before loggin out
 void MainWindow::confirmLogout()
 {
     QMessageBox::StandardButton reply = QMessageBox::question(this,"Confirm Logout", "Are you sure you want to logout?", QMessageBox::Yes | QMessageBox::No);
@@ -302,6 +316,7 @@ void MainWindow::confirmLogout()
     }
 }
 
+//logs out the user and clears user data
 void MainWindow::logout()
 {
     qDebug() << "logging out";
@@ -319,8 +334,7 @@ void MainWindow::logout()
     setAuthFile(lout);
 }
 
-
-
+//requests the note list of the user from the database
 void MainWindow::getAllNotes(QString user)
 {
     //qDebug() << "getting all notes" << user;
@@ -331,7 +345,7 @@ void MainWindow::getAllNotes(QString user)
     connect(netRepGetNotes, &QNetworkReply::readyRead, this, &MainWindow::readAllNotes );
 }
 
-
+//adds the received note list to the listWidget
 void MainWindow::showNoteList()
 {
     ui->listWidget->clear();
@@ -346,6 +360,7 @@ void MainWindow::showNoteList()
 
 }
 
+//reads network reply of the network request sent from getAllNotes()
 void MainWindow::readAllNotes()
 {
     QByteArray noteListQb = netRepGetNotes->readAll();
@@ -377,6 +392,7 @@ void MainWindow::readAllNotes()
 
 }
 
+//shows the given the note in the plaintextedit
 void MainWindow::showNote()
 {
     QByteArray showNoteQb = netRepShowNote->readAll();
@@ -393,14 +409,7 @@ void MainWindow::showNote()
 
 }
 
-void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
-{
-    //qDebug() << item->text();
-    selectedNote = item->text();
-    ui->lineNoteTitle->setText(selectedNote);
-    getNote(selectedNote);
-}
-
+//get the given note from the database
 void MainWindow::getNote(QString notename)
 {
 
@@ -411,6 +420,7 @@ void MainWindow::getNote(QString notename)
     connect(netRepShowNote, &QNetworkReply::readyRead, this, &MainWindow::showNote);
 }
 
+//sends a note to the database
 void MainWindow::pushNote()
 {
 
@@ -464,6 +474,7 @@ void MainWindow::pushNote()
 
 }
 
+//turns on the edit mode
 void MainWindow::editNote()
 {
     editOn = true;
@@ -475,6 +486,7 @@ void MainWindow::editNote()
     getNote(selectedNote);
 }
 
+//sends delete request to the selected note
 void MainWindow::deleteNote()
 {
     QString url = "https://qfirenotes-default-rtdb.firebaseio.com/users/" + authUser + "notes/" + selectedNote + ".json";
@@ -502,8 +514,24 @@ void MainWindow::deleteNote()
     refresh();
 }
 
+//shows the about screen
+void MainWindow::showAbout()
+{
+    About about;
+    about.setModal(true);
+    about.exec();
+}
 
-//funtion buttons
+//***********************funtion buttons slots************************************************
+void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item)
+{
+    //qDebug() << item->text();
+    selectedNote = item->text();
+    ui->lineNoteTitle->setText(selectedNote);
+    getNote(selectedNote);
+}
+
+
 void MainWindow::on_btnSignupCreate_clicked()
 {
     if( ui->lineSignupUN->text()=="" || ui->lineSignupPW->text()=="" || ui->lineSignupPWRe->text()=="" ){
@@ -579,7 +607,25 @@ void MainWindow::on_btnEditNote_clicked()
 }
 
 
-// navigation buttons slots
+void MainWindow::on_btnAuthLogout_clicked()
+{
+    confirmLogout();
+}
+
+
+void MainWindow::on_listWidget_itemSelectionChanged()
+{
+    enableEditDelete();
+}
+
+
+void MainWindow::on_btnRefresh_clicked()
+{
+    refresh();
+}
+
+
+//***********************navigation buttons slots*********************************************
 void MainWindow::on_btnNavLogin_clicked()
 {
     ui->stackedWidget->setCurrentIndex(1);
@@ -622,25 +668,24 @@ void MainWindow::on_btnCancelSave_clicked()
 }
 
 
-
-
-
-
-void MainWindow::on_btnAuthLogout_clicked()
+void MainWindow::on_btnAbout_clicked()
 {
-    confirmLogout();
-}
-
-
-void MainWindow::on_listWidget_itemSelectionChanged()
-{
-    enableEditDelete();
+    showAbout();
 }
 
 
 
-void MainWindow::on_btnRefresh_clicked()
-{
-    refresh();
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
 

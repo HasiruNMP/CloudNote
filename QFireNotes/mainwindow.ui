@@ -18,7 +18,7 @@
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>5</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="page">
        <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="2,5,2">
@@ -127,11 +127,25 @@
                  <widget class="QPushButton" name="btnNavSignup">
                   <property name="font">
                    <font>
+                    <family>Segoe UI</family>
                     <pointsize>11</pointsize>
                    </font>
                   </property>
                   <property name="text">
                    <string>SIGNUP</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="btnAbout">
+                  <property name="font">
+                   <font>
+                    <family>Segoe UI</family>
+                    <pointsize>11</pointsize>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>ABOUT</string>
                   </property>
                  </widget>
                 </item>

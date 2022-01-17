@@ -1,10 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "about.h"
 #include <QMainWindow>
 #include <QWidget>
 #include <QListWidgetItem>
 #include <QtNetwork>
+
 
 using std::string;
 
@@ -45,6 +47,7 @@ private slots:
     void on_btnAuthLogout_clicked();
     void on_listWidget_itemSelectionChanged();
     void on_btnRefresh_clicked();
+    void on_btnAbout_clicked();
 
 private:
     Ui::MainWindow *ui;
@@ -69,6 +72,7 @@ private:
     bool editOn = false;
     QRegularExpression rx;
     QValidator *validator;
+    About *about;
 
 
     void getNote(QString notename);
@@ -89,6 +93,7 @@ private:
     void readAuthFile();
     void setAuthFile(QStringList authstrlist);
     bool checkTitle(QString title);
+    void showAbout();
 
 };
 
