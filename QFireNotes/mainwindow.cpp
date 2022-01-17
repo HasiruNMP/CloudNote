@@ -203,9 +203,9 @@ void MainWindow::readLAuth()
             showAlert("Greetings " + authName + "! \nLogin Succesfull.");
             ui->lineLoginUN->clear();
             ui->lineLoginPW->clear();
-            //ui->stackedWidget->setCurrentIndex(3);
-            //getAllNotes(authUser);
-            //ui->labelUsersNotes->setText(authName + "'s Notes");
+            ui->stackedWidget->setCurrentIndex(3);
+            getAllNotes(authUser);
+            ui->labelUsersNotes->setText(authName + "'s Notes");
         }
         else
         {

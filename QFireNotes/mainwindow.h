@@ -6,7 +6,6 @@
 #include <QListWidgetItem>
 #include <QtNetwork>
 
-
 using std::string;
 
 namespace Ui {
