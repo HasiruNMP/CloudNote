@@ -12,7 +12,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     //setting up loading screen animation
     QMovie *movie = new QMovie(":/img/res/img/loading.gif");
     ui->setupUi(this);
-    ui->stackedWidget->setCurrentIndex(0);
+    ui->stackedWidget->setCurrentIndex(5);
     ui->labelGif->setMovie(movie);
     movie->start();
 
@@ -39,8 +39,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->lineSignupPWRe->setValidator(valiPW);
     ui->lineAddTitle->setValidator(valiTitle);
 
-    //check authentication details of the user
-    //readAuthFile();
+    //check if there are any authentication data in the textfile to auto log in user
+    readAuthFile();
 
 }
 
@@ -331,6 +331,10 @@ void MainWindow::logout()
         qDebug() << noteList[i] << "after";
     }*/
     noteList.clear();
+    ui->lineAddTitle->clear();
+    ui->lineNoteTitle->clear();
+    ui->plainNoteText->clear();
+    ui->plainTextEdit->clear();
     setAuthFile(lout);
 }
 
