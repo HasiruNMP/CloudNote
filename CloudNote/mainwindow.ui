@@ -18,7 +18,7 @@
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="page">
        <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="2,5,2">
@@ -929,6 +929,9 @@
               <family>Segoe UI</family>
               <pointsize>12</pointsize>
              </font>
+            </property>
+            <property name="placeholderText">
+             <string>type note content here</string>
             </property>
            </widget>
           </item>
